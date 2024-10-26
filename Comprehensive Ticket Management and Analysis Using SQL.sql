@@ -1,5 +1,7 @@
 USE db;
 
+/* Upload the table from my excel file which name is tickets_table */
+
 SELECT *
 FROM Occ_Tickets_Data;
 
