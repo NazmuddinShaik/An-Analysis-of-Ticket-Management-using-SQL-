@@ -1,24 +1,17 @@
-USE db;
-
-/* Upload the table from my excel file which name is tickets_table */
-
 SELECT *
-FROM Occ_Tickets_Data;
-
-
+FROM Employee_Tickets
 
 /* 
 I Have Imported a table that Consists of a 5605 rows of data that tickets worked by all employees in organazation there is No Duplicate data
 in the table
 The table coonsists following columns
-	- Associate Column which consists names of employees
+	- Emp_name Column which consists names of employees
 	- Customer column consists name of the customer 
 	- Ticket_type column consists ticket types in this example 'SR' , 'IN'and'HD'
 		- 'SR' - refer Service Requests
 		- 'IN' - refer Incidents
 		- 'HD' - Helpdesk Tickets
 	- Ticket_No column consist of ticket number
-	- Title column gives the title of the ticket
 	- The Hours Worked column consists of the time each employee worked on the ticket
 	- Created On column is the time when the ticket is genrated
 	- Updated On column is the time which is last updated on the ticket
@@ -29,7 +22,7 @@ SELECT *
 INTO
 	Emp_tickets	--New table which we copying the data from our original table
 FROM
-	Occ_Tickets_Data;
+	Employee_Tickets;
 
 --Looking what type of data types in the tabele
 SELECT	Column_Name,
@@ -95,7 +88,7 @@ SELECT
 	COUNT(*) AS Ticket_Count
 FROM
 	Emp_tickets
-WHERE Customer = 'Libra Solutions Group'		--(If you want tickets count for specific customer )
+WHERE Customer = 'Customer-1'		--(If you want tickets count for specific customer )
 GROUP BY
 	Emp_name,customer							
 ORDER BY 3 DESC							--(It means order the third column in the table)
@@ -163,7 +156,7 @@ SELECT *
 FROM
 	Total_Working_Time
 WHERE 
-	Customer = 'Spyglass Corporate Services Group'		--Select the required customer
+	Customer = 'Customer-6'		--Select the required customer
 
 
 --(6) Which person max hours worked per each customer
@@ -221,7 +214,7 @@ ON
 AND
 	TC.Ticket_Count = MT.Tickets_Count
 --WHERE
---	TC.Emp_name = 'nazmuddin shaik'
+--	TC.Emp_name = 'Joe'
 ORDER BY
 	TC.Customer,TC.Emp_name;
 
@@ -237,6 +230,8 @@ FROM
 GROUP BY 
 	Emp_Name,
 	customer;
+
+SELECT * from TicketCounts
 
 
 --(8)Determining customer if all employees worked on the project then it shows as All employees worked on the project other wise show the name of the specific employees who are worked on that project
@@ -330,7 +325,7 @@ GROUP BY
     Emp_name;
 
 --(12)a) Creating a stored procedure that takes Employee name & date return the all of the ticekts worked by the employee
-CREATE PROCEDURE sp.Emp_tickets
+CREATE PROCEDURE dbo.SP_Emp_tickets
 	@name NVARCHAR(20),
 	@date NVARCHAR(10)
 AS
@@ -352,7 +347,7 @@ WHERE table_name = 'Emp_tickets';
 
 --(12)b) Executing the Stored Procedure Enter the Details in between quotes and date should be in YYYY-MM-DD Format
 
-EXEC sp.Emp_tickets  @name = 'Nazmuddin Shaik', @date = '2024-06-12';
+EXEC dbo.SP_Emp_tickets  @name = 'Joe', @date = '2024-06-12';
 
 
 --(13) Determine the Cutsomers which are not worked by employee
@@ -434,17 +429,14 @@ Total_tickets;
 SELECT
     Ticket_No,
     Customer,
-    title,
     STRING_AGG(Emp_name, ',') AS Employee_Names
 FROM
     Emp_tickets 
 GROUP BY
     Ticket_No,
-    Customer,
-    title
+    Customer
 HAVING
     COUNT(DISTINCT Emp_name) > 1;
 
 SELECT * 
 FROM Emp_tickets
-
